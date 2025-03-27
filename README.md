@@ -18,3 +18,7 @@ Frontend> docker run --rm -it -p 3000:80 -v ${pwd}:/usr/share/nginx/html:ro ngin
 Correr backend...
 Backend> docker build -t laliga-backend .
 Backend> docker run -p 8080:8080 laliga-backend
+
+En caso de que dé un error al correr el backend, volver a correr con esto para asegurarse que sea siempre la versión más nueva de código...
+Backend> docker build --no-cache -t laliga-backend .
+Backend> docker run -p 8080:8080 laliga-backend
