@@ -10,15 +10,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Middleware para habilitar CORS y registrar peticiones
+// Middleware para habilitar CORS
 func enableCors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Recibido %s request para %s", r.Method, r.URL)
-		// Agrega encabezados CORS
+		// Encabezados CORS
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Origin, X-Requested-With, Accept")
-		// Si es preflight (OPTIONS), responder de inmediato
+		// Si es una solicitud preflight (OPTIONS), responde inmediatamente
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -45,7 +44,7 @@ var (
 	mu      sync.Mutex
 )
 
-// getMatches devuelve todos los partidos.
+// getMatches: GET /api/matches
 func getMatches(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -57,7 +56,7 @@ func getMatches(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(list)
 }
 
-// getMatch devuelve un partido por ID.
+// getMatch: GET /api/matches/{id}
 func getMatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -76,7 +75,7 @@ func getMatch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(match)
 }
 
-// createMatch crea un nuevo partido.
+// createMatch: POST /api/matches
 func createMatch(w http.ResponseWriter, r *http.Request) {
 	var m Match
 	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
@@ -86,7 +85,7 @@ func createMatch(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	m.ID = nextID
 	nextID++
-	// Valores iniciales
+	// Inicializamos los contadores y bandera de tiempo extra.
 	m.Goals = 0
 	m.YellowCards = 0
 	m.RedCards = 0
@@ -98,7 +97,7 @@ func createMatch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(m)
 }
 
-// updateMatch actualiza un partido existente.
+// updateMatch: PUT /api/matches/{id}
 func updateMatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -126,7 +125,7 @@ func updateMatch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(match)
 }
 
-// deleteMatch elimina un partido por su ID.
+// deleteMatch: DELETE /api/matches/{id}
 func deleteMatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -145,26 +144,117 @@ func deleteMatch(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// registerGoal: PATCH /api/matches/{id}/goals
+func registerGoal(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+	mu.Lock()
+	match, exists := matches[id]
+	if !exists {
+		mu.Unlock()
+		http.Error(w, "Partido no encontrado", http.StatusNotFound)
+		return
+	}
+	match.Goals++
+	mu.Unlock()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(match)
+}
+
+// registerYellowCard: PATCH /api/matches/{id}/yellowcards
+func registerYellowCard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+	mu.Lock()
+	match, exists := matches[id]
+	if !exists {
+		mu.Unlock()
+		http.Error(w, "Partido no encontrado", http.StatusNotFound)
+		return
+	}
+	match.YellowCards++
+	mu.Unlock()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(match)
+}
+
+// registerRedCard: PATCH /api/matches/{id}/redcards
+func registerRedCard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+	mu.Lock()
+	match, exists := matches[id]
+	if !exists {
+		mu.Unlock()
+		http.Error(w, "Partido no encontrado", http.StatusNotFound)
+		return
+	}
+	match.RedCards++
+	mu.Unlock()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(match)
+}
+
+// setExtraTime: PATCH /api/matches/{id}/extratime
+func setExtraTime(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+	mu.Lock()
+	match, exists := matches[id]
+	if !exists {
+		mu.Unlock()
+		http.Error(w, "Partido no encontrado", http.StatusNotFound)
+		return
+	}
+	match.ExtraTime = true
+	mu.Unlock()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(match)
+}
+
 func main() {
 	r := mux.NewRouter()
+
+	// Aplica el middleware CORS globalmente
 	r.Use(enableCors)
 
-	// Agregar una ruta catch-all para OPTIONS (por si alguna ruta no es capturada)
+	// Handler global para solicitudes OPTIONS
 	r.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Origin, X-Requested-With, Accept")
 		w.WriteHeader(http.StatusOK)
 	})
 
-	// Handler para la raíz (opcional)
+	// Rutas
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Bienvenido a la API de La Liga Tracker"))
 	})
-
-	// Endpoints de la API
 	r.HandleFunc("/api/matches", getMatches).Methods("GET")
 	r.HandleFunc("/api/matches/{id}", getMatch).Methods("GET")
 	r.HandleFunc("/api/matches", createMatch).Methods("POST")
 	r.HandleFunc("/api/matches/{id}", updateMatch).Methods("PUT")
 	r.HandleFunc("/api/matches/{id}", deleteMatch).Methods("DELETE")
+	r.HandleFunc("/api/matches/{id}/goals", registerGoal).Methods("PATCH")
+	r.HandleFunc("/api/matches/{id}/yellowcards", registerYellowCard).Methods("PATCH")
+	r.HandleFunc("/api/matches/{id}/redcards", registerRedCard).Methods("PATCH")
+	r.HandleFunc("/api/matches/{id}/extratime", setExtraTime).Methods("PATCH")
 
 	log.Println("Servidor corriendo en el puerto 8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
