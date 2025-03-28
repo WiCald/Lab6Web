@@ -1,0 +1,132 @@
+openapi: 3.0.0
+info:
+  title: API de La Liga Tracker
+  version: "1.0.0"
+paths:
+  /api/matches:
+    get:
+      summary: Obtiene todos los partidos
+      responses:
+        '200':
+          description: Lista de partidos
+    post:
+      summary: Crea un nuevo partido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
+      responses:
+        '201':
+          description: Partido creado
+  /api/matches/{id}:
+    get:
+      summary: Obtiene un partido por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Partido encontrado
+    put:
+      summary: Actualiza un partido existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
+      responses:
+        '200':
+          description: Partido actualizado
+    delete:
+      summary: Elimina un partido por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Partido eliminado
+  /api/matches/{id}/goals:
+    patch:
+      summary: Incrementa el contador de goles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Partido actualizado con goles incrementados
+  /api/matches/{id}/yellowcards:
+    patch:
+      summary: Incrementa el contador de tarjetas amarillas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Partido actualizado con tarjeta amarilla
+  /api/matches/{id}/redcards:
+    patch:
+      summary: Incrementa el contador de tarjetas rojas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Partido actualizado con tarjeta roja
+  /api/matches/{id}/extratime:
+    patch:
+      summary: Establece tiempo extra para el partido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Partido actualizado con tiempo extra activado
+components:
+  schemas:
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        matchDate:
+          type: string
+          format: date
+        goals:
+          type: integer
+        yellowCards:
+          type: integer
+        redCards:
+          type: integer
+        extraTime:
+          type: boolean
