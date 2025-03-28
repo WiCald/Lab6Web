@@ -1,0 +1,220 @@
+{
+    "info": {
+      "_postman_id": "12345678-1234-1234-1234-1234567890ab",
+      "name": "La Liga Tracker API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": "Colección de la API de La Liga Tracker que incluye endpoints para gestionar partidos, registrar goles, tarjetas y tiempo extra."
+    },
+    "item": [
+      {
+        "name": "GET All Matches",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "GET Match by ID",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Create Match",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"homeTeam\": \"Real Madrid\",\n  \"awayTeam\": \"Barcelona\",\n  \"matchDate\": \"2025-04-27\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8080/api/matches",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update Match",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"homeTeam\": \"Real Madrid Updated\",\n  \"awayTeam\": \"Barcelona Updated\",\n  \"matchDate\": \"2025-04-28\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Delete Match",
+        "request": {
+          "method": "DELETE",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Increment Goals",
+        "request": {
+          "method": "PATCH",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1/goals",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1",
+              "goals"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Increment Yellow Cards",
+        "request": {
+          "method": "PATCH",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1/yellowcards",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1",
+              "yellowcards"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Increment Red Cards",
+        "request": {
+          "method": "PATCH",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1/redcards",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1",
+              "redcards"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Set Extra Time",
+        "request": {
+          "method": "PATCH",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:8080/api/matches/1/extratime",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "matches",
+              "1",
+              "extratime"
+            ]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  

@@ -1,0 +1,22 @@
+Uso de la API de La Liga Tracker
+
+Base URL: http://localhost:8080/api
+
+Endpoints disponibles:
+- GET /api/matches: Obtener todos los partidos.
+- GET /api/matches/{id}: Obtener un partido por ID.
+- POST /api/matches: Crear un nuevo partido. Se espera un JSON con homeTeam, awayTeam y matchDate.
+- PUT /api/matches/{id}: Actualizar un partido existente.
+- DELETE /api/matches/{id}: Eliminar un partido.
+- PATCH /api/matches/{id}/goals: Incrementar el contador de goles.
+- PATCH /api/matches/{id}/yellowcards: Registrar una tarjeta amarilla.
+- PATCH /api/matches/{id}/redcards: Registrar una tarjeta roja.
+- PATCH /api/matches/{id}/extratime: Establecer tiempo extra.
+
+Ejemplo de solicitud POST:
+POST http://localhost:8080/api/matches
+{
+  "homeTeam": "Real Madrid",
+  "awayTeam": "Barcelona",
+  "matchDate": "2025-04-27"
+}
