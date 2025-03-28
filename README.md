@@ -24,3 +24,5 @@ Backend> docker build --no-cache -t laliga-backend .
 Backend> docker run -p 8080:8080 laliga-backend
 
 Postman: https://wc-2887871.postman.co/workspace/W-C's-Workspace~a86b466f-7d68-4b7b-8c3b-81963ec4eb72/collection/43555267-e121ad30-e2df-4111-abbd-ea51aa3aab6d?action=share&creator=43555267
+
+NOTA: Asegurarse de tener Docker Desktop abierto antes de intentar correr ambos
